@@ -85,7 +85,7 @@
    </script>
    ```
 
-   这样我们就将标签中的title属性和Vue中的data进行了绑定，如果我们需要改变标签中的title，直接通过更改Vue实例中的title属性就可以。v-bind还有一个简便的写法就是 **:**.
+   这样我们就将标签中的title属性和Vue中的data进行了绑定，如果我们需要改变标签中的title，直接通过更改Vue实例中的title属性就可以。v-bind还有一个简便的写法就是 `:`.
 
 3. 事件处理：v-on
 
@@ -427,40 +427,40 @@
    - 遍历对象
 
      ```html
-  <div id="app">
-         <ul>
-             <li v-for="(item, key) in lists">{{ item }} - {{key}}</li>
-         </ul>
+     <div id="app">
+              <ul>
+                  <li v-for="(item, key) in lists">{{ item }} - {{key}}</li>
+              </ul>
      </div>
      <script>
-         app = new Vue({
-             el: '#app',
-             data: {
-                 lists: {
-                     111: {
-                         name: 'xiaohong',
-                         age: 18
-                     },
-                     222: {
-                         name: 'xiaohei',
-                         age: 19
-                     }
-                 }
-             }
-         });
-     </script>
+          app = new Vue({
+              el: '#app',
+              data: {
+                  lists: {
+                      111: {
+                          name: 'xiaohong',
+                          age: 18
+                      },
+                      222: {
+                          name: 'xiaohei',
+                          age: 19
+                      }
+                  }
+              }
+          });
+      </script>
      ```
-   
-     如果`v-for`是两个参数的话，第一个参数就是属性值，第二个值就是属性。
-
-     如果是三个参数的话，第三个参数就是`index`值。
-
-     但是`for`出来的结果不会跟你在对象中的写的顺序是一致的，会因为`key`的值发生顺序的变化。
-   
+     
+       如果`v-for`是两个参数的话，第一个参数就是属性值，第二个值就是属性。
+     
+      如果是三个参数的话，第三个参数就是`index`值。
+     
+      但是`for`出来的结果不会跟你在对象中的写的顺序是一致的，会因为`key`的值发生顺序的变化。
+     
    - 遍历数组
    
      ```html
-         <div id="app">
+     <div id="app">
            <ul>
              <li v-for="(item, index ) in list">{{ item }} - {{index}}</li>
            </ul>
@@ -491,37 +491,35 @@
    
      遍历数组最多有两个参数：第一个参数是每一项的`value`，第二个参数是`index`值。
    
-   最后，可以通过在`v-for`的同一个标签内动态的绑定`key`的值，注意此时`key的唯一性，不要使用数组的index`作为`key`。加`key`的目的是，在`virtual dom`做`diff`算法的时候，会给性能提供部分优化。
+      最后，可以通过在`v-for`的同一个标签内动态的绑定`key`的值，注意此时`key的唯一性，不要使用数组的index`作为`key`。加`key`的目的是，在`virtual dom`做`diff`算法的时候，会给性能提供部分优化。
    
-   ```html
+   ```HTML
    <div id="app">
-       <ul>
-           <li v-for="(item, key ) in list" :key="item.name">
-               {{ item }} - {{key}}
-           </li>
-       </ul>
-   </div>
-   <script>
-    app = new Vue({
-           el: '#app',
-        data: {
-               list: [
-                {
-                       name: 'xiaohong',
-                       age: 18
-                   },
+          <ul>
+              <li v-for="(item, key ) in list" :key="item.name">
+                  {{ item }} - {{key}}
+              </li>
+          </ul>
+      </div>
+      <script>
+       app = new Vue({
+              el: '#app',
+           data: {
+                  list: [
                    {
-                       name: 'xiaohei',
-                       age: 17
-                   }
-               ]
-           }
-       });
-   </script>
+                          name: 'xiaohong',
+                          age: 18
+                      },
+                      {
+                          name: 'xiaohei',
+                          age: 17
+                      }
+                  ]
+              }
+          });
+      </script>  
    ```
-   
-   
-   
+
 8. class和style绑定
 
    - class绑定：
@@ -696,7 +694,7 @@
 
    ```html
    <div id="app">
-       <input type="text"v-model="msg" />
+       <input type="text" v-model="msg" />
    </div>
    <script>
    app = new Vue({
