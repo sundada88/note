@@ -270,7 +270,7 @@
 
 3. `Teleport` 传送门
 
-   当我们在业务组件中弹出弹框，而这个弹出框需要被添加在`body`上面，这时候就可以使用`Teleport`组件了。
+   当我们在业务组件中弹出弹框，而这个弹出框需要被添加在特定的元素上面，比如我们添加在`body`上面，这时候就可以使用`Teleport`组件了，通过`to`来决定添加在哪个元素上面。
 
    ```vue
    <template>
@@ -348,9 +348,9 @@
    </script>
    ```
 
-   通过`emits`选项，可以更好的记录组件应该如何工作？
+   通过`emits`选项，可以更好的记录组件应该如何工作？将组件可以触发的事件一下便可以看清楚。
 
-   还可以验证抛出的事件，比如验证必须传入参数
+   如果对抛出的事件有要求，还可以验证抛出的事件，比如验证必须传入参数
 
    ```vue
    <template>
@@ -470,7 +470,7 @@
 
    - 性能提升在`vue3`中可以忽略不计，所以`vue3`中推荐使用状态组件
    - 函数式组件仅能通过纯函数形式声明，接收`porps`和`context`两个参数
-   - SFC中`temlate`不能添加`functional`特性声明函数式组件
+   - `SFC` 中 `temlate`不能添加`functional`特性声明函数式组件
    - `{functional:true}`组件选项移除
 
    声明一个函数式组件，`Functional.vue`
@@ -501,26 +501,24 @@
     </script>
     ```
 
-    
-
     由于`vue3.0`中函数式组件必须定义为纯函数，异步组件定义时有如下变化：
 
     - 必须明确使用`defineAsyncComponent`包裹
-    - `component`选项重命名为`loader`
+- `component`选项重命名为`loader`
     - `loader`函数不在接收`resolve` and `reject`且必须返回一个`Promise`	
-
+    
     定义一个异步组件
 
     ```js
-    import {defineAsyncComponent} from 'vue'
+import {defineAsyncComponent} from 'vue'
     // 不带配置的异步组件
     const asyncPage = defineAsyncComponent(() => import('./index.vue'))
     ```
-
+    
     带配置的异步组件，`loader`选项是以前的`component`
 
     ```js
-    import ErrorComponent from './ErrorComponent.vue'
+import ErrorComponent from './ErrorComponent.vue'
     import LoadingComponent from './LoadingComponent.vue'
     // 待配置的异步组件
     const asyncPageWithOptions = defineAsyncComponent({
@@ -531,7 +529,7 @@
         loadingComponent: LoadingComponent
     })
     ```
-
+    
 11. 组件`data` 选项应该总是声明为函数
 
     `vue2.x`的时候只有根组件的`data` 我们写作对象，`vue3.x`中的多有`data`选项都要写作函数。
@@ -703,7 +701,7 @@
 
         ```bash
        npm install vue-router@next
-        ```
+       ```
 
     使用：
 
@@ -742,7 +740,6 @@
        createApp({}).use(router)
        ```
 
-       
 
 
 
