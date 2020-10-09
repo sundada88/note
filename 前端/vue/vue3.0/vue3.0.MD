@@ -712,7 +712,7 @@ import ErrorComponent from './ErrorComponent.vue'
        ```js
        import {createRoute, createWebHashHistory} from 'vue-router'
        const router = creteRoute({
-           history: createWebHashHistory(),
+           history: createWebHashHistory(),// 之前的mode选项现在改为history
            rotues: [
            	{
                    path: '/',
