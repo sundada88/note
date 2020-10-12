@@ -570,7 +570,7 @@ import ErrorComponent from './ErrorComponent.vue'
 
       ```js
       const app = createApp({})
-      app.config.isCustomElement = tag => tag === 'platic-button'
+      app.config.isCustomElement = tag => tag === 'plastic-button'
       ```
 
 13. `is` 属性仅限用在`component`标签上
@@ -728,7 +728,7 @@ import ErrorComponent from './ErrorComponent.vue'
 
        ```js
        import {createRoute, createWebHashHistory} from 'vue-router'
-       const router = creteRoute({
+       const router = createRoute({
            history: createWebHashHistory(),
            rotues: [
            	{
@@ -739,6 +739,122 @@ import ErrorComponent from './ErrorComponent.vue'
        })
        createApp({}).use(router)
        ```
+       
+    3. 动态的添加
+    
+       ```js
+       const router = createRoute({
+           history: createHashHistory(),
+           routes: [
+               {
+                   path: '/',
+                   component: index
+               }
+           ]
+       })
+       router.addRoute({
+           path: '/about',
+           name: 'about',
+           component: () => import('./about.vue')
+       })
+       createApp(App).use(router)
+       ```
+    
+       如果在`about`中再加入子路由：
+    
+       ```js
+       router.addRoute('about', {
+           path: '/about/info',
+           component: () => import('./info.vue')
+       })
+       ```
+    
+    4. 和`composition API`结合使用，在`setup`中访问到路由实例
+    
+       ```vue
+       <template>
+       	<button @click="handleClick">
+               返回上一级
+           </button>
+       </template>
+       <script>
+       import {useRouter} from 'vue-router'
+       setup () {
+           // 获取路由实例
+           const router = useRouter()
+           return {
+               handleClick() {
+                   router.go(-1)
+               }
+           }
+       }
+       </script>
+       ```
+    
+       `route`是响应式对象，可监控变化
+    
+       ```vue
+       <script>
+       import useRoute from 'vue-router'
+       setup () {
+           const route = useRoute()
+           watchEffect(() => route.query, query => {
+               console.log(query)
+           })
+       }
+       </script>
+       ```
+    
+       组件内路由守卫
+    
+       ```vue
+       <script>
+       import {onBeforeRouteLeave, onBeforeRouteUpdate} from 'vue-router'
+       setup () {
+           onBeforeRouteLeave((to, from) => {
+       		// 路由离开的时候做的操作
+           }),
+           onBeforeRouterUpdate((to, from) => {
+               // 路由更新的时候做的操作
+           })
+    }
+       </script>
+       ```
+       
+    5. `router-link`组件自定义化
+    
+       ```vue
+       <!-- NavLink.vue -->
+       <template>
+       	<div :class="{active:isActive}" @click="navigate">
+               {{route.name}}
+           </div>
+       </template>
+       <script>
+       import {RouterLink, useLink} from 'vue-router'
+       export default { 
+           props: {
+               // RouterLink相当于router-link组件，比如在router-link中使用的props属性现在都可以在NavLink组件中使用
+               ...RouterLink.props,
+               inactiveClass: String
+           },
+           setup (props) {
+               // 获取RouterLink内部的属性和方法
+               const {route, href, isActive, isExactActive, navigate} = useLink(props)
+               return {route, isActive, navigate}
+           }
+       }
+       </script>
+       <style>
+           .active {
+               background-color: red;
+           }
+       </style>
+       ```
+    
+       
+    
+       
 
 
 
