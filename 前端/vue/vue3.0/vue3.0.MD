@@ -852,9 +852,177 @@ import ErrorComponent from './ErrorComponent.vue'
        </style>
        ```
     
-       
+    6. 一些破坏性的变化
     
-       
+       - 实例创建方式：`new Router()` => `createRouter`
+    
+       - 路由模式：`mode` => `history`
+    
+         - `history` => `createWebHistory`
+         - `hash` => `createWebHashHistory`
+         - `abstract` => `createMemoryHistory`
+    
+       - `baseUrl` => `createWebHistory({base: 'xxx'})`
+    
+         `vue-router2.x`
+    
+         ```js
+         new Router({
+             mode: 'history',
+             baseUrl: 'xxx'
+         })
+         ```
+    
+         `vue-router@next`
+    
+         ```js
+         createRouter({
+             history: createWebHistory({base: 'xxx'})
+         })
+         ```
+    
+       - 通配符改变
+    
+         - `vue-router2.x`
+    
+           ```js
+           routes: [
+               {
+                   path: '/',
+                   name: 'index',
+                   component: () => import('./index.vue')
+               },
+               {
+                   path: '*',
+                   name: '404',
+                   component: () => import('./notFound.vue')
+               }
+           ]
+           ```
+    
+         - `vue-router@next` 必须通过`parmas`传入
+    
+           ```js
+           {
+               path: '/:pathMatch(.*)*',
+               name: 'notFound',
+               component: () => import('notFound.vue')
+           }
+           // 使用命名导航至404页面，resolve最终生成一个location对象，可以查看location等
+           router.resolve({
+               name: 'notFound',
+               params: {
+                   pathMatch: ['not', 'found'] // /not/found
+               }
+           })
+           ```
+    
+       - `onReady()` => `isReady()`
+    
+         当我们往`router`中`push`的时候，由于`router`中的方法都是异步的所以需要等`onReady`之后，在执行
+    
+         - `vue-router`
+    
+           ```js
+           router.push()
+           router.onReady(onSuccess, onError)
+           ```
+    
+         - `vue-router`
+    
+           ```js
+           router.isReady().then(onSuccess).catch(onError)
+           ```
+    
+       - `scrollBehavior`变化
+    
+         - `vue-router`
+    
+           ```js
+           new Router({
+               scrollBehavior(to, from, savedPosition) {
+                   return {
+                       x: 0,
+                       y: 0
+                   }
+               }
+           })
+           /*
+           	to和from是路由对象
+           	要是想滚动位置{x: 0, y: 0}
+           */
+           ```
+    
+         - `vue-router`
+    
+           ```js
+           createRouter({
+               scrollBehavior(to, from, savedPosition) {
+                   if (savedPosition) {
+                       return savedPosition
+                   } else {
+                       return {
+                       	top: 0,
+                       	left: 0
+                   	}
+                   }
+               }
+           })
+           ```
+    
+       - `keep-alive`和`transtion`标签
+    
+         - `vue-router`
+    
+           ```html
+           <router-alive>
+           	<router-view></router-view>
+           </router-alive>
+           ```
+    
+         - `vue-router-next`
+    
+           ```html
+           <router-view v-slot="{Component}">
+               <keep-alive>
+               	<component :is="Component" />
+               </keep-alive>
+           </router-view>
+           ```
+    
+       - `router-link`
+    
+         移除了一票属性
+    
+         - `append`
+    
+           ```html
+           <router-link to="child-route" append /> // 使用append加上父路由，/parent/child-route
+           ```
+    
+         - `tag/event`
+    
+           - `vue-router`
+    
+             ```html
+             <router-link to="/xx" tag="span" event="click"></router-link>
+             ```
+    
+             将`router-link`标签渲染为`span`标签，通过`click`事件跳转到响应的路由
+    
+           - `vue-router@next`
+    
+             ```html
+             <router-link to="/xx" custom v-slot="{navigate}" >
+             	<span @click='navigate'></span>
+             </router-link>
+             ```
+    
+             `custom`告诉自定义，`router-link`就不会生成默认的`a`标签，通过作用域插槽获取内部的方法，然后默认插槽中的内容会被渲染成`router-link`中的内容。
+    
+         - `exact`: 现在完全匹配逻辑简化
+    
+         
 
 
 
