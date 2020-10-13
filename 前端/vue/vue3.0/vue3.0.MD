@@ -1022,6 +1022,113 @@ import ErrorComponent from './ErrorComponent.vue'
     
          - `exact`: 现在完全匹配逻辑简化
     
+         - `mixins`中的路由守卫将被忽略
+         
+         - `match`被移除，统一合并到`resolve`中
+         
+         - `router.getMatchComponents()`被移除
+         
+           ```js
+           router.currentRoute.value.matched // 获取相关的组件进行操作
+           ```
+         
+         - 包括首屏导航在内的所有导航均为异步
+         
+           ```js
+           app.use(router)
+           router.isReady().then(() => app.mount('#app'))
+           ```
+         
+           > 如果首屏存在路由守卫，则可以不等待就绪直接挂载，产生的结果和`vue2`相同
+         
+         - `route`的`parent`属性被移除
+         
+           ```js
+           const parent = this.$route.matched[this.$route.matched.length - 2]
+           ```
+         
+         - `routes` 选项是必填项
+         
+           ```js
+           createRouter({
+               routes: []
+           })
+           ```
+         
+         - 跳转不存在命名路由报错
+         
+           ```js
+           router.push({name: 'indexx'})
+           ```
+         
+         - 缺少必填参会抛出异常
+         
+         - 命名子路由如果`path`为空的时候不在追加`/`
+         
+           ```js
+           [
+               {
+                   path: '/index',
+                   children: [
+                       {
+                           path: '',
+                       	component: index
+                       }
+                   ]
+               }
+           ]
+           ```
+         
+           以前生成的`url`：`/index/`
+         
+           现在生成的`url`: `/index`
+         
+           副作用：给设置了重定向`redirect`选项的子路由带来副作用
+         
+           ```js
+           [
+               {
+                   path: '/index',
+                   children: [
+                       {
+                           path: '',
+                       	redirect: 'home'
+                       },
+                       {
+           				path: 'home',
+                           component: homeComp
+                       }
+                   ]
+               }
+           ]
+           ```
+         
+           之前：`/index/home`
+         
+           现在：`/home`
+         
+           解决办法：
+         
+           ```js
+           [
+               {
+                   path: '/index',
+                   children: [
+                       {
+                           path: '',
+                       	redirect: '/index/home'
+                       },
+                       {
+           				path: 'home',
+                           component: homeComp
+                       }
+                   ]
+               }
+           ]
+           ```
+         
+         - `$route` 属性编码行为
+         
          
 
 
