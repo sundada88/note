@@ -302,7 +302,61 @@
 
 4. `Fragments`，vue3中组件可以拥有多个根。
 
-5. `Emits`选项
+5. `inject` 变化
+
+   `vue2.x`
+
+   ```js
+   inject: {
+       elForm: {
+           default: ''
+       }
+   }
+   ```
+
+   `vue3.x`
+
+   ```js
+   import {inject} from 'vue'
+   setup () {
+       const elForm = inject('elForm', {}) // 默认值是{}
+   }
+   ```
+
+6. `provide`变化
+
+   `vue2.x`
+
+   ```js
+   provide () {
+       return {
+           form: this
+       }
+   }
+   ```
+
+   `vue3.x`
+
+   ```js
+   import {getCurrentInstance, provide} from 'vue'
+   const instance = getCurrentInstance()
+   provide('form', instance)
+   ```
+
+   
+
+7. `unref`
+
+   ```js
+   return unref(test)
+   /*
+   	如果test是一个ref的话，则返回test.value
+   	如果test不是一个ref的话，则直接返回test的值
+   ```
+
+   
+
+8. `Emits`选项
 
    如果一个组件向外触发一个`click` 事件，比如在`emit.vue`组件中。
 
@@ -369,7 +423,7 @@
    </script>
    ```
 
-6. `Global API`改为应用程序实例调用
+9. `Global API`改为应用程序实例调用
 
    `vue2.x`中有很多全局的`api`可以改变`vue`的行为，比如`Vue.component`，`Vue.use`，`Vue.directive`，`Vue.mixin`等，这导致一些问题：
 
@@ -387,7 +441,7 @@
    	.mount('#app')
    ```
 
-7. `Global and internal APIs`重构为可做摇树优化
+10. `Global and internal APIs`重构为可做摇树优化
 
    `vue2`中不少`global-api`是作为静态函数直接挂在构造函数上的，例如`Vue.nextTick()`,如果我们从未在代码中用过他们，就会形成所谓的`dead code`，这类`global-api`造成的`dead code`无法使用`webpack`的`tree-shaking`排除掉。
 
@@ -416,7 +470,7 @@
    5. `Vue.set`
    6. `Vue.delete`
 
-8. `v-model` 使用的变化
+11. `v-model` 使用的变化
 
    `v-model`选项和`v-bind`的`sync`修饰符被移除，统一改为`v-model`形式
 
@@ -462,31 +516,31 @@
    </div>
    ```
 
-9. 函数式组件使用的变化
+11. 函数式组件使用的变化
 
-   函数式组件仅能通过简单函数方式创建，`funtional`选项废弃。
+    函数式组件仅能通过简单函数方式创建，`funtional`选项废弃。
 
-   函数式组件变化较大，主要有以下几点：
+    函数式组件变化较大，主要有以下几点：
 
-   - 性能提升在`vue3`中可以忽略不计，所以`vue3`中推荐使用状态组件
-   - 函数式组件仅能通过纯函数形式声明，接收`porps`和`context`两个参数
-   - `SFC` 中 `temlate`不能添加`functional`特性声明函数式组件
-   - `{functional:true}`组件选项移除
+    - 性能提升在`vue3`中可以忽略不计，所以`vue3`中推荐使用状态组件
+    - 函数式组件仅能通过纯函数形式声明，接收`porps`和`context`两个参数
+    - `SFC` 中 `temlate`不能添加`functional`特性声明函数式组件
+    - `{functional:true}`组件选项移除
 
-   声明一个函数式组件，`Functional.vue`
+    声明一个函数式组件，`Functional.vue`
 
-   ```vue
-   <script>
-   import {h} from 'vue'
-   const Heading = (props, context) => {
-       return h(`h${props.level}`, context.attrs. context.slots)
-   }
-   Heading.props = ['level']
-   export default Heading
-   </script>
-   ```
+    ```vue
+    <script>
+    import {h} from 'vue'
+    const Heading = (props, context) => {
+        return h(`h${props.level}`, context.attrs. context.slots)
+    }
+    Heading.props = ['level']
+    export default Heading
+    </script>
+    ```
 
-10. 异步组件
+12. 异步组件
 
     `vue2.x`通过返回`import`引入的值来达到异步组件的目的。
 
@@ -660,7 +714,45 @@ import ErrorComponent from './ErrorComponent.vue'
 
 18. `vue2.x`中应用程序根容器的`outerHTML`会被根组件的模板替换（或者编译为template）,`vue3.x`现在使用根容器的`innerHTML`取代
 
-19. `vue3.0`中移除的东西
+19. `app.config.globalProperties.$ELEMENT`挂载在全局上的属性怎么在组件中获取
+
+    `vue2.x`
+
+    ```js
+    const install = (Vue, opts = {}) {
+        Vue.prototype.$ELEMENT = {
+        	size:399,
+        	zIndex: 
+    	}
+    }
+    ```
+
+    ```js
+    // 在vue组件中使用
+    this.$ELEMENT
+    ```
+
+    `vue3.x`
+
+    ```js
+    const install = (app, opts = {}) {
+        app.config.globalProperties.$ELEMENT = {
+            size: 399,
+            zIndex: opts.zIndex || 2000
+        }
+    }
+    ```
+
+    ```js
+    import {getCurrentInstance} from 'vue'
+    setup () {
+        const ELEMENT = getCurrentInstance().ctx.$ELEMENT // 这样就获取了
+    }
+    ```
+
+    
+
+20. `vue3.0`中移除的东西
 
     1. `keyCode` 不在支持
 
@@ -690,8 +782,8 @@ import ErrorComponent from './ErrorComponent.vue'
            console.log(data)
        })
        ```
-    
-20. `vue-router4`的变化
+
+21. `vue-router4`的变化
 
     引入方式：
 
@@ -741,7 +833,7 @@ import ErrorComponent from './ErrorComponent.vue'
        ```
        
     3. 动态的添加
-    
+
        ```js
        const router = createRoute({
            history: createHashHistory(),
@@ -759,18 +851,18 @@ import ErrorComponent from './ErrorComponent.vue'
        })
        createApp(App).use(router)
        ```
-    
+
        如果在`about`中再加入子路由：
-    
+
        ```js
        router.addRoute('about', {
            path: '/about/info',
            component: () => import('./info.vue')
        })
        ```
-    
+
     4. 和`composition API`结合使用，在`setup`中访问到路由实例
-    
+
        ```vue
        <template>
        	<button @click="handleClick">
@@ -790,9 +882,9 @@ import ErrorComponent from './ErrorComponent.vue'
        }
        </script>
        ```
-    
+
        `route`是响应式对象，可监控变化
-    
+
        ```vue
        <script>
        import useRoute from 'vue-router'
@@ -804,9 +896,9 @@ import ErrorComponent from './ErrorComponent.vue'
        }
        </script>
        ```
-    
+
        组件内路由守卫
-    
+
        ```vue
        <script>
        import {onBeforeRouteLeave, onBeforeRouteUpdate} from 'vue-router'
@@ -822,7 +914,7 @@ import ErrorComponent from './ErrorComponent.vue'
        ```
        
     5. `router-link`组件自定义化
-    
+
        ```vue
        <!-- NavLink.vue -->
        <template>
@@ -851,40 +943,40 @@ import ErrorComponent from './ErrorComponent.vue'
            }
        </style>
        ```
-    
+
     6. 一些破坏性的变化
-    
+
        - 实例创建方式：`new Router()` => `createRouter`
-    
+
        - 路由模式：`mode` => `history`
-    
+
          - `history` => `createWebHistory`
          - `hash` => `createWebHashHistory`
          - `abstract` => `createMemoryHistory`
-    
+
        - `baseUrl` => `createWebHistory({base: 'xxx'})`
-    
+
          `vue-router2.x`
-    
+
          ```js
          new Router({
              mode: 'history',
              baseUrl: 'xxx'
          })
          ```
-    
+
          `vue-router@next`
-    
+
          ```js
          createRouter({
              history: createWebHistory({base: 'xxx'})
          })
          ```
-    
+
        - 通配符改变
-    
+
          - `vue-router2.x`
-    
+
            ```js
            routes: [
                {
@@ -899,9 +991,9 @@ import ErrorComponent from './ErrorComponent.vue'
                }
            ]
            ```
-    
+
          - `vue-router@next` 必须通过`parmas`传入
-    
+
            ```js
            {
                path: '/:pathMatch(.*)*',
@@ -916,28 +1008,28 @@ import ErrorComponent from './ErrorComponent.vue'
                }
            })
            ```
-    
+
        - `onReady()` => `isReady()`
-    
+
          当我们往`router`中`push`的时候，由于`router`中的方法都是异步的所以需要等`onReady`之后，在执行
-    
+
          - `vue-router`
-    
+
            ```js
            router.push()
            router.onReady(onSuccess, onError)
            ```
-    
+
          - `vue-router`
-    
+
            ```js
            router.isReady().then(onSuccess).catch(onError)
            ```
-    
+
        - `scrollBehavior`变化
-    
+
          - `vue-router`
-    
+
            ```js
            new Router({
                scrollBehavior(to, from, savedPosition) {
@@ -952,9 +1044,9 @@ import ErrorComponent from './ErrorComponent.vue'
            	要是想滚动位置{x: 0, y: 0}
            */
            ```
-    
+
          - `vue-router`
-    
+
            ```js
            createRouter({
                scrollBehavior(to, from, savedPosition) {
@@ -969,19 +1061,19 @@ import ErrorComponent from './ErrorComponent.vue'
                }
            })
            ```
-    
+
        - `keep-alive`和`transtion`标签
-    
+
          - `vue-router`
-    
+
            ```html
            <router-alive>
            	<router-view></router-view>
            </router-alive>
            ```
-    
+
          - `vue-router-next`
-    
+
            ```html
            <router-view v-slot="{Component}">
                <keep-alive>
@@ -989,39 +1081,39 @@ import ErrorComponent from './ErrorComponent.vue'
                </keep-alive>
            </router-view>
            ```
-    
+
        - `router-link`
-    
+
          移除了一票属性
-    
+
          - `append`
-    
+
            ```html
            <router-link to="child-route" append /> // 使用append加上父路由，/parent/child-route
            ```
-    
+
          - `tag/event`
-    
+
            - `vue-router`
-    
+
              ```html
              <router-link to="/xx" tag="span" event="click"></router-link>
              ```
-    
+
              将`router-link`标签渲染为`span`标签，通过`click`事件跳转到响应的路由
-    
+
            - `vue-router@next`
-    
+
              ```html
              <router-link to="/xx" custom v-slot="{navigate}" >
              	<span @click='navigate'></span>
              </router-link>
              ```
-    
+
              `custom`告诉自定义，`router-link`就不会生成默认的`a`标签，通过作用域插槽获取内部的方法，然后默认插槽中的内容会被渲染成`router-link`中的内容。
-    
+
          - `exact`: 现在完全匹配逻辑简化
-    
+
          - `mixins`中的路由守卫将被忽略
          
          - `match`被移除，统一合并到`resolve`中
