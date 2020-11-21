@@ -10,7 +10,7 @@
 
 ### 安装
 
-直接使用<script>便签引入
+直接使用`<script>`便签引入
 
 ```js
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>

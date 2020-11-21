@@ -546,17 +546,22 @@
 
     ```vue
     <template>
-    <AsyncComp></AsyncComp>
+    	<AsyncComp></AsyncComp>
     </template>
     <script>
+        // 注册局部异步组件
     	components: {
             AsyncComp: () => import('./AsyncComp.vue')
         }
     </script>
+<!--  注册全局异步组件 -->
+    <!-- 
+	Vue.component('compName', () => import('./index.vue'))
+    -->
     ```
-
+    
     由于`vue3.0`中函数式组件必须定义为纯函数，异步组件定义时有如下变化：
-
+    
     - 必须明确使用`defineAsyncComponent`包裹
 - `component`选项重命名为`loader`
     - `loader`函数不在接收`resolve` and `reject`且必须返回一个`Promise`	
@@ -1045,7 +1050,7 @@ import ErrorComponent from './ErrorComponent.vue'
            */
            ```
 
-         - `vue-router`
+         - `vue-router-next`
 
            ```js
            createRouter({
@@ -1067,9 +1072,9 @@ import ErrorComponent from './ErrorComponent.vue'
          - `vue-router`
 
            ```html
-           <router-alive>
+           <keep-alive>
            	<router-view></router-view>
-           </router-alive>
+           </keep-alive>
            ```
 
          - `vue-router-next`
